@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+psycopg[binary]
+requests
+python-dotenv
+pytest
+httpx
