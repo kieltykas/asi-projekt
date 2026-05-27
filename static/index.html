@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Space & Earth Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #1a2a6c; color: white; }
+        .btn { padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🛰️ Space & Earth Data (Real-time)</h1>
+    <button class="btn" onclick="syncData()">🔄 Pobierz aktualne dane</button>
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Godzina zapisu (Timestamp)</th>
+                <th>Miasto</th>
+                <th>Temp (°C)</th>
+                <th>Opis</th>
+                <th>Asteroidy (NASA)</th>
+            </tr>
+        </thead>
+        <tbody id="data-table"></tbody>
+    </table>
+
+    <script>
+        async function loadData() {
+            const res = await fetch('/api/data');
+            const data = await res.json();
+            const tbody = document.getElementById('data-table');
+            tbody.innerHTML = data.map(row => `
+                <tr>
+                    <td>${new Date(row.timestamp).toLocaleString()}</td>
+                    <td>${row.city}</td>
+                    <td>${row.temp}</td>
+                    <td>${row.weather_desc}</td>
+                    <td>${row.asteroid_count}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function syncData() {
+            await fetch('/api/sync', { method: 'POST' });
+            loadData();
+        }
+        loadData();
+        setInterval(loadData, 30000); // Auto-odświeżanie co 30s
+    </script>
+</body>
+</html>
