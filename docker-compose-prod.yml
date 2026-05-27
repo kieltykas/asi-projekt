@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  web:
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+  proxy:
+    image: httpd:2.4
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/apache.conf:/usr/local/apache2/conf/extra/proxy.conf
+    command: >
+      sh -c "echo 'Include conf/extra/proxy.conf' >> /usr/local/apache2/conf/httpd.conf && httpd-foreground"
+    depends_on:
+      - web
